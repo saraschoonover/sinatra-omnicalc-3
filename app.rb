@@ -21,6 +21,9 @@ get("/chat") do
   erb(:ai_chat)
 end
 
-get("/umbrella_result") do
+post("/process_umbrella") do
+  @location = params.fetch("location")
+
+  HTTP.get("")
   erb(:umbrella_result)
 end
