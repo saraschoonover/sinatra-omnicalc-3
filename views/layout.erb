@@ -4,9 +4,16 @@
     <title>Sinatra Template</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
-
+    
   <body>
+  <div class="navbar">
+      <a href="/umbrella">Umbrella</a>
+      <a href="/message">Single AI message</a>
+      <a href="/chat">AI chat</a>
+    </div>
     <%= yield %>
   </body>
 </html>
