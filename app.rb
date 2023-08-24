@@ -23,7 +23,8 @@ end
 
 post("/process_umbrella") do
   @location = params.fetch("location")
+  maps_url ="https://maps.googleapis.com/maps/api/geocode/json?address=Merchandise%20Mart%20Chicago&key="
 
-  HTTP.get("")
+  @get_request = HTTP.get(maps_url)
   erb(:umbrella_result)
 end
