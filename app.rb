@@ -22,9 +22,14 @@ get("/chat") do
 end
 
 post("/process_umbrella") do
-  @location = params.fetch("location")
-  maps_url ="https://maps.googleapis.com/maps/api/geocode/json?address=Merchandise%20Mart%20Chicago&key="
+  @location = params.fetch("location").to_s
+  gmaps_key = ENV.fetch("GMAPS_KEY")
+  gmaps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{user_location}&key=#{gmaps_key}"
+  maps_data = HTTP.get(gmaps_url)
+  parsed_gmaps_data = JSON.parse(maps_data)
+  @results_array = parsed_gmaps_data.fetch("results")
 
-  @get_request = HTTP.get(maps_url)
+  
+
   erb(:umbrella_result)
 end
