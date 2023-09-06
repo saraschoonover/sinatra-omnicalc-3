@@ -17,6 +17,38 @@ get("/message") do
   erb(:ai_message)
 end
 
+post("/process_message"){
+  @message = params.fetch("message")
+  
+  request_headers_hash = {
+    "Authorization" => "Bearer #{ENV.fetch("NEW_OPENAI_KEY")}",
+    "content-type" => "application/json"
+    }
+  
+    request_body_hash = {
+      "model" => "gpt-3.5-turbo",
+      "messages" => [
+        {
+          "role" => "user",
+          "content" => @message
+        }
+      ]
+    }
+  
+    request_body_json = JSON.generate(request_body_hash)
+  
+    raw_response = HTTP.headers(request_headers_hash).post(
+      "https://api.openai.com/v1/chat/completions",
+      :body => request_body_json
+    )
+
+    @parsed_response = JSON.parse(raw_response)
+
+    #@reply = @parsed_response.dig("choices", 0, "message", "content")
+
+  erb(:ai_message_result)
+}
+
 get("/chat") do
   erb(:ai_chat)
 end
