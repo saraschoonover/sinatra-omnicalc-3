@@ -50,8 +50,56 @@ post("/process_message"){
 }
 
 get("/chat") do
+  if (cookies["chat_history"] == nil)
+    @chat_history = []
+    cookies["chat_history"] = JSON.generate(@chat_history)
+  else
+    @chat_history = JSON.parse(cookies["chat_history"])
+  end
   erb(:ai_chat)
 end
+
+post("/chat"){
+
+  @user_message = params.fetch("user_input")
+
+  request_headers_hash = {
+    "Authorization" => "Bearer #{ENV.fetch("NEW_OPENAI_KEY")}",
+    "content-type" => "application/json"
+  }
+
+  request_body_hash = {
+    "model" => "gpt-3.5-turbo",
+    "messages": [
+    {
+      "role": "user",
+      "content": @user_message
+    }
+  ]
+  }
+
+  request_body_json = JSON.generate(request_body_hash)
+
+  raw_response = HTTP.headers(request_headers_hash).post(
+    "https://api.openai.com/v1/chat/completions",
+    :body => request_body_json
+  )
+
+  @chat_history = JSON.parse(cookies["chat_history"]) 
+
+  @parsed_response = JSON.parse(raw_response).dig("choices", 0, "message","content") 
+
+  @chat_history.push({"role" => "user", "content" => @user_message})
+  @chat_history.push({"role"=> "assistant", "content"=> @parsed_response})
+  cookies["chat_history"] = JSON.generate(@chat_history)
+
+  erb(:ai_chat)
+}
+
+post("/clear_chat"){
+  cookies["chat_history"] = JSON.generate([])
+  redirect(:chat)
+}
 
 post("/process_umbrella") do
   @user_location = params.fetch("location")

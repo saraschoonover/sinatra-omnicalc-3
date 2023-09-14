@@ -1,6 +1,14 @@
 
+<h1>Chat</h1>
+<dl>
+<% @chat_history.each do |message|%>
+  <dt><%= message.fetch("role")%></dt>
+  <dd><%= message.fetch("content")%></dd>
+  <dd></dd>
+<% end %>
+</dl>
 <form action="/chat" method="post">
-  <label for="user_input">You:
+  <label for="user_input">
   <input name="user_input" id="user_input" type="text" />
   <button>Send</button>
 </form>
